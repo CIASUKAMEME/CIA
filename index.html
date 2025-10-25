@@ -52,13 +52,31 @@
   </div>
 
   <script>
-    async function sendEmail() {
-      document.getElementById("status").innerText = "Mengirim...";
-      // Di sini nanti kita sambungkan ke API pengirim email
-      setTimeout(() => {
-        document.getElementById("status").innerText = "✅ Email berhasil dikirim!";
-      }, 2000);
+  async function sendEmail() {
+    const to = document.getElementById("to").value;
+    const subject = document.getElementById("subject").value;
+    const text = document.getElementById("message").value;
+
+    document.getElementById("status").innerText = "Mengirim...";
+
+    try {
+      const response = await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, subject, text }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        document.getElementById("status").innerText = "✅ " + result.message;
+      } else {
+        document.getElementById("status").innerText = "❌ " + result.message;
+      }
+    } catch (error) {
+      console.error(error);
+      document.getElementById("status").innerText =
+        "❌ Terjadi kesalahan saat mengirim.";
     }
-  </script>
-</body>
-</html>
+  }
+          </script>
